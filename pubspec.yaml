@@ -1,0 +1,16 @@
+name: rich_text_editor
+description: Rich text editor for flutter
+version: 0.0.1
+author: Namhyun, Gu
+homepage: https://github.com/namhyun-gu/flutter_rich_text_editor
+
+environment:
+  sdk: ">=2.2.2 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
