@@ -73,13 +73,25 @@ class _StyleToolbarState extends State<StyleToolbar> {
           }
         }
         return Container(
-          color: widget.toolbarBackgroundColor,
+          constraints: BoxConstraints(maxHeight: 50),
+          decoration: BoxDecoration(
+            color: widget.toolbarBackgroundColor,
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(15.0), topRight: Radius.circular(15.0)),
+          ),
           child: Row(
-            mainAxisSize: MainAxisSize.min,
             children: [
-              ..._buildActions(
-                currentStyle ?? SpannableStyle(),
-                currentSelection,
+              Expanded(
+                child: ListView(
+                  shrinkWrap: true,
+                  scrollDirection: Axis.horizontal,
+                  children: <Widget>[
+                    ..._buildActions(
+                      currentStyle ?? SpannableStyle(),
+                      currentSelection,
+                    ),
+                  ],
+                ),
               ),
               IconButton(
                 icon: Icon(
