@@ -9,7 +9,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  rich_text_editor:
+  karmka_text_editor:
     path: ../
 
 flutter:

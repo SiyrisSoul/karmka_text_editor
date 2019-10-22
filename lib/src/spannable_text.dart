@@ -1,7 +1,7 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
-import 'package:rich_text_editor/diff_patch_match/DiffMatchPatch.dart';
+import 'package:karmka_text_editor/diff_patch_match/DiffMatchPatch.dart';
 
 import 'spannable_list.dart';
 import 'spannable_style.dart';

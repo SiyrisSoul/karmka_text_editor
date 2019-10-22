@@ -1,4 +1,4 @@
-library rich_text_editor;
+library karmka_text_editor;
 
 export 'src/spannable_list.dart';
 export 'src/spannable_style.dart';

@@ -17,7 +17,7 @@ Must be use flutter **v1.8.3** or later, Dart 2.2.2 or later
 ```yaml
 karmka_text_editor:
   git:
-    url: https://github.com/tutosirisom/karmka_text_editor
+    url: https://github.com/tutosirisom/karmka_text_editor.git
 ```
 
 ## Using
