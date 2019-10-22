@@ -73,7 +73,7 @@ class _StyleToolbarState extends State<StyleToolbar> {
           }
         }
         return Container(
-          constraints: BoxConstraints(maxHeight: 50),
+          constraints: BoxConstraints(maxHeight: 50, maxWidth: MediaQuery.of(context).size.width),
           decoration: BoxDecoration(
             color: widget.toolbarBackgroundColor,
             borderRadius: BorderRadius.only(
