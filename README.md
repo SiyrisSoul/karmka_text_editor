@@ -25,7 +25,7 @@ karmka_text_editor:
 * Import library 
 
 ```dart
-import 'package:rich_text_editor/rich_text_editor.dart';
+import 'package:karmka_text_editor/rich_text_editor.dart';
 ```
 
 * Initialize controller
