@@ -5,6 +5,6 @@
 ## [0.0.2]
 
 * Added customization options:
-    toolbarActionToggleColor
-    toolbarBackgroundColor
-    toolbarActionColor
+    - toolbarActionToggleColor
+    - toolbarBackgroundColor
+    - toolbarActionColor
