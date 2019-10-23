@@ -56,9 +56,10 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           StyleToolbar(
             stayFocused: false,
-            toolbarActionColor: Colors.white,
+            toolbarUndoRedoColor: Colors.white,
+            toolbarActionColor: Colors.white.withOpacity(0.5),
             toolbarBackgroundColor: Colors.indigo,
-            toolbarActionToggleColor: Colors.red,
+            toolbarActionToggleColor: Colors.white,
             controller: _controller,
           ),
         ],

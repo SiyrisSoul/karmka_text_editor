@@ -29,6 +29,7 @@ class StyleToolbar extends StatefulWidget {
   final SpannableTextEditingController controller;
   final Color toolbarActionToggleColor;
   final Color toolbarBackgroundColor;
+  final Color toolbarUndoRedoColor;
   final Color toolbarActionColor;
   final bool stayFocused;
 
@@ -38,7 +39,8 @@ class StyleToolbar extends StatefulWidget {
       this.stayFocused = true,
       this.toolbarActionToggleColor,
       this.toolbarBackgroundColor = Colors.transparent,
-      this.toolbarActionColor = Colors.black})
+      this.toolbarUndoRedoColor = Colors.black,
+      this.toolbarActionColor = Colors.grey,})
       : super(key: key);
 
   @override
@@ -76,85 +78,173 @@ class _StyleToolbarState extends State<StyleToolbar> {
         }
         return Container(
           constraints: BoxConstraints(
-              maxHeight: 50, maxWidth: MediaQuery.of(context).size.width),
+              maxHeight: 55, maxWidth: MediaQuery.of(context).size.width),
           decoration: BoxDecoration(
             color: widget.toolbarBackgroundColor,
             borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(15.0),
-                topRight: Radius.circular(15.0)),
+              topLeft: Radius.elliptical(20, 15),
+              topRight: Radius.elliptical(20, 15),
+            ),
           ),
-          child: Row(
-            children: [
-              Expanded(
-                child: ListView(
-                  shrinkWrap: true,
-                  scrollDirection: Axis.horizontal,
-                  children: <Widget>[
-                    ..._buildActions(
-                      currentStyle ?? SpannableStyle(),
-                      currentSelection,
-                    ),
-                  ],
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: Row(
+              children: [
+                SizedBox(
+                  width: 5,
                 ),
-              ),
-              IconButton(
-                icon: Icon(
-                  Icons.format_color_text,
-                  color: getColorFromValue(currentStyle.foregroundColor),
-                ),
-                onPressed: () async {
-                  if (widget.stayFocused) {
-                    FocusScope.of(context).unfocus();
-                  }
-
-                  ColorSelection colorSelection = await showModalBottomSheet(
-                    context: context,
-                    builder: (context) => ColorPicker(
-                      colors: defaultColors,
-                      selectionColor: getColorFromValue(
-                        currentStyle.foregroundColor,
+                Container(
+                  decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.2),
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(100),
+                      )),
+                  child: Row(
+                    children: <Widget>[
+                      ListView(
+                        shrinkWrap: true,
+                        scrollDirection: Axis.horizontal,
+                        children: <Widget>[
+                          ..._buildActions(
+                            currentStyle ?? SpannableStyle(),
+                            currentSelection,
+                          ),
+                        ],
                       ),
-                    ),
-                  );
-                  if (colorSelection != null) {
-                    _setTextColor(
-                      currentStyle ?? SpannableStyle(),
-                      useForegroundColor,
-                      colorSelection,
-                      selection: currentSelection,
-                    );
-                  }
-                },
-              ),
-              IconButton(
-                icon: Icon(
-                  Icons.undo,
-                  color: widget.toolbarActionColor,
+                      RawMaterialButton(
+                        padding: EdgeInsets.all(1),
+                        hoverElevation: 0.0,
+                        hoverColor: Colors.white.withOpacity(0.1),
+                        focusColor: Colors.white.withOpacity(0.1),
+                        splashColor: Colors.white.withOpacity(0.1),
+                        highlightColor: Colors.white.withOpacity(0.1),
+                        disabledElevation: 0.0,
+                        highlightElevation: 0.0,
+                        focusElevation: 0.0,
+                        shape: CircleBorder(side: BorderSide.none),
+                        elevation: 0.0,
+                        fillColor: Colors.white,
+                        constraints: BoxConstraints(
+                            maxHeight: double.infinity,
+                            maxWidth: double.infinity),
+                        onPressed: () async {
+                          if (widget.stayFocused) {
+                            FocusScope.of(context).unfocus();
+                          }
+
+                          ColorSelection colorSelection =
+                              await showModalBottomSheet(
+                            context: context,
+                            builder: (context) => ColorPicker(
+                              colors: defaultColors,
+                              selectionColor: getColorFromValue(
+                                currentStyle.foregroundColor,
+                              ),
+                            ),
+                          );
+                          if (colorSelection != null) {
+                            _setTextColor(
+                              currentStyle ?? SpannableStyle(),
+                              useForegroundColor,
+                              colorSelection,
+                              selection: currentSelection,
+                            );
+                          }
+                        },
+                        child: Center(
+                          child: Icon(
+                            Icons.fiber_manual_record,
+                            color:
+                                getColorFromValue(currentStyle.foregroundColor),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                onPressed: widget.controller.canUndo()
-                    ? () {
-                        widget.controller.undo();
-                        if (widget.stayFocused) {
-                          FocusScope.of(context).unfocus();
-                        }
-                      }
-                    : null,
-              ),
-              IconButton(
-                icon: Icon(
-                  Icons.redo,
-                  color: widget.toolbarActionColor,
+                Expanded(child: Container()),
+                Container(
+                  decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.2),
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(100),
+                      )),
+                  child: Row(
+                    children: <Widget>[
+                      RawMaterialButton(
+                        hoverElevation: 0.0,
+                        hoverColor: Colors.white.withOpacity(0.1),
+                        focusColor: Colors.white.withOpacity(0.1),
+                        splashColor: Colors.white.withOpacity(0.1),
+                        highlightColor: Colors.white.withOpacity(0.1),
+                        disabledElevation: 0.0,
+                        highlightElevation: 0.0,
+                        focusElevation: 0.0,
+                        shape: CircleBorder(side: BorderSide.none),
+                        elevation: 0.0,
+                        fillColor: Colors.transparent,
+                        constraints: BoxConstraints(
+                            maxHeight: double.infinity,
+                            maxWidth: double.infinity),
+                        onPressed: widget.controller.canUndo()
+                            ? () {
+                                widget.controller.undo();
+                                if (widget.stayFocused) {
+                                  FocusScope.of(context).unfocus();
+                                }
+                              }
+                            : null,
+                        child: Padding(
+                          padding: const EdgeInsets.all(6.0),
+                          child: Center(
+                            child: Icon(
+                              Icons.undo,
+                              color: widget.toolbarUndoRedoColor,
+                            ),
+                          ),
+                        ),
+                      ),
+                      RawMaterialButton(
+                        hoverElevation: 0.0,
+                        hoverColor: Colors.white.withOpacity(0.1),
+                        focusColor: Colors.white.withOpacity(0.1),
+                        splashColor: Colors.white.withOpacity(0.1),
+                        highlightColor: Colors.white.withOpacity(0.1),
+                        disabledElevation: 0.0,
+                        highlightElevation: 0.0,
+                        focusElevation: 0.0,
+                        shape: CircleBorder(side: BorderSide.none),
+                        elevation: 0.0,
+                        fillColor: Colors.transparent,
+                        constraints: BoxConstraints(
+                            maxHeight: double.infinity,
+                            maxWidth: double.infinity),
+                        onPressed: widget.controller.canRedo()
+                            ? () {
+                                widget.controller.redo();
+                                if (widget.stayFocused) {
+                                  FocusScope.of(context).unfocus();
+                                }
+                              }
+                            : null,
+                        child: Padding(
+                          padding: const EdgeInsets.all(6.0),
+                          child: Center(
+                            child: Icon(
+                              Icons.redo,
+                              color: widget.toolbarUndoRedoColor,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                onPressed: widget.controller.canRedo()
-                    ? () {
-                        widget.controller.redo();
-                        if (widget.stayFocused) {
-                          FocusScope.of(context).unfocus();
-                        }
-                      }
-                    : null,
-              ),
-            ],
+                SizedBox(
+                  width: 5,
+                ),
+              ],
+            ),
           ),
         );
       },
