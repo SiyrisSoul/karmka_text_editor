@@ -30,10 +30,12 @@ class StyleToolbar extends StatefulWidget {
   final Color toolbarActionToggleColor;
   final Color toolbarBackgroundColor;
   final Color toolbarActionColor;
+  final bool stayFocused;
 
   StyleToolbar(
       {Key key,
       this.controller,
+      this.stayFocused = true,
       this.toolbarActionToggleColor,
       this.toolbarBackgroundColor = Colors.transparent,
       this.toolbarActionColor = Colors.black})
@@ -73,11 +75,13 @@ class _StyleToolbarState extends State<StyleToolbar> {
           }
         }
         return Container(
-          constraints: BoxConstraints(maxHeight: 50, maxWidth: MediaQuery.of(context).size.width),
+          constraints: BoxConstraints(
+              maxHeight: 50, maxWidth: MediaQuery.of(context).size.width),
           decoration: BoxDecoration(
             color: widget.toolbarBackgroundColor,
             borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(15.0), topRight: Radius.circular(15.0)),
+                topLeft: Radius.circular(15.0),
+                topRight: Radius.circular(15.0)),
           ),
           child: Row(
             children: [
@@ -99,7 +103,10 @@ class _StyleToolbarState extends State<StyleToolbar> {
                   color: getColorFromValue(currentStyle.foregroundColor),
                 ),
                 onPressed: () async {
-                  FocusScope.of(context).unfocus();
+                  if (widget.stayFocused) {
+                    FocusScope.of(context).unfocus();
+                  }
+
                   ColorSelection colorSelection = await showModalBottomSheet(
                     context: context,
                     builder: (context) => ColorPicker(
@@ -127,7 +134,9 @@ class _StyleToolbarState extends State<StyleToolbar> {
                 onPressed: widget.controller.canUndo()
                     ? () {
                         widget.controller.undo();
-                        FocusScope.of(context).unfocus();
+                        if (widget.stayFocused) {
+                          FocusScope.of(context).unfocus();
+                        }
                       }
                     : null,
               ),
@@ -139,7 +148,9 @@ class _StyleToolbarState extends State<StyleToolbar> {
                 onPressed: widget.controller.canRedo()
                     ? () {
                         widget.controller.redo();
-                        FocusScope.of(context).unfocus();
+                        if (widget.stayFocused) {
+                          FocusScope.of(context).unfocus();
+                        }
                       }
                     : null,
               ),

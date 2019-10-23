@@ -55,6 +55,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
           StyleToolbar(
+            stayFocused: false,
             toolbarActionColor: Colors.white,
             toolbarBackgroundColor: Colors.indigo,
             toolbarActionToggleColor: Colors.red,
