@@ -19,6 +19,10 @@ class SpannableTextEditingController extends TextEditingController {
 
   bool _updatedByHistory = false;
 
+  /// These variables are needed for correctly handling auto-complete/case-correction on mobile devices
+  bool _previouslyAutocorrected = false;
+  bool _previouslyUpdatedCase = false;
+
   SpannableTextEditingController({
     String text = '',
     SpannableList styleList,
@@ -119,7 +123,7 @@ class SpannableTextEditingController extends TextEditingController {
   }
 
   bool canUndo() => _histories.isNotEmpty;
-  
+
   void undo() {
     assert(canUndo());
     _updateHistories(_undoHistories);
@@ -153,6 +157,7 @@ class SpannableTextEditingController extends TextEditingController {
   void _updateList(String oldText, String newText) {
     var textChange = _calculateTextChange(oldText, newText);
     var diffLength = (oldText.length - newText.length).abs();
+
     if (textChange != null && diffLength > 0) {
       var composedStyle = (composingStyle ?? SpannableStyle()).copy();
       if (diffLength > 0) {
@@ -190,13 +195,16 @@ class SpannableTextEditingController extends TextEditingController {
               break;
             }
             if (nextDiff.text.length < diff.text.length) {
-            
               operation = Operation.delete;
               length = diff.text.length - nextDiff.text.length;
               break;
             }
           }
         }
+
+        /// Resets the variables
+        _previouslyUpdatedCase = false;
+        _previouslyAutocorrected = false;
         operation = Operation.insert;
         length = diff.text.length;
         break;
@@ -204,33 +212,56 @@ class SpannableTextEditingController extends TextEditingController {
         if (index + 1 < diffList.length) {
           final nextDiff = diffList[index + 1];
           if (nextDiff.operation == Operation.insert) {
+            /// Runs when text is auto-corrected with a single case change (for example: lower-case to upper-case).
             if (nextDiff.text.length == diff.text.length) {
-              offset += diff.text.length;
+              /// Check to see if we previously updated case and if so block insertion and change operation to delete.
+              /// This typically happens when back-spacing a previously case-corrected word.
+              if (_previouslyUpdatedCase) {
+                operation = Operation.delete;
+                _previouslyUpdatedCase = true;
+                _previouslyAutocorrected = false;
+                length = diff.text.length;
+                break;
+              }
+
+              /// Check to see if we previously auto-corrected a word and if so block insertion and change operation to delete.
+              if (_previouslyAutocorrected) {
+                operation = Operation.delete;
+                _previouslyUpdatedCase = true;
+                _previouslyAutocorrected = false;
+                length = diff.text.length;
+                break;
+              }
+              offset++;
               operation = Operation.insert;
-              length = nextDiff.text.length;
+              length = nextDiff.text.length + 1;
+              _previouslyUpdatedCase = true;
+              _previouslyAutocorrected = false;
               break;
             }
+
+            /// Runs when text is auto-corrected or auto-completed
             if (nextDiff.text.length > diff.text.length) {
               offset++;
               operation = Operation.insert;
               length = nextDiff.text.length - diff.text.length;
+              _previouslyAutocorrected = true;
+              _previouslyUpdatedCase = false;
               break;
             }
           }
         }
         operation = Operation.delete;
+        _previouslyUpdatedCase = false;
+        _previouslyAutocorrected = false;
         length = diff.text.length;
         break;
       }
     }
 
     if (operation != null) {
-      // print('Operation: $operation');
-      // print('Offset: $offset');
-      // print('Length: $length');
       return _TextChange(operation, offset, length);
     } else {
-      //print('diffList length: ${diffList.length}');
       return null;
     }
   }
