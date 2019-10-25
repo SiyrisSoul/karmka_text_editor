@@ -1,7 +1,7 @@
 name: karmka_text_editor
 description: Rich text editor for flutter based on work by Namhyun, Gu. Extended and made customizable for use in Karmka.
-version: 0.0.2
-author: Adam Bahr. Based on work by Namhyun, Gu
+version: 0.0.3
+author: Adam Bahr
 homepage: https://github.com/tutosirisom/karmka_text_editor
 
 environment:

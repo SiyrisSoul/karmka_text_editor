@@ -8,3 +8,8 @@
     - toolbarActionToggleColor
     - toolbarBackgroundColor
     - toolbarActionColor
+
+## [0.0.3]
+
+* Fixed bug with auto-correct and case-change
+
