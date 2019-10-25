@@ -65,7 +65,7 @@ class SpannableList {
         );
         children.add(childSpan);
       });
-    }
+    } 
     return TextSpan(
       style: defaultStyle,
       children: children,

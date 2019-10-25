@@ -8,6 +8,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Karmka Editor',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.indigo,
       ),
@@ -27,12 +28,62 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   SpannableTextEditingController _controller = SpannableTextEditingController();
+  String _savedStyleJson;
+  String _savedText;
+  bool _showToolbar = true;
+
+  void save() {
+    _savedText = _controller.text;
+    _savedStyleJson = _controller.styleList.toJson();
+    print('saved');
+  }
+
+  void load() {
+    setState(() {
+      _controller = SpannableTextEditingController.fromJson(
+          text: _savedText, styleJson: _savedStyleJson);
+      final val = TextSelection.collapsed(offset: _controller.text.length);
+      _controller.selection = val;
+    });
+    refreshToolbar();
+    print('loaded');
+  }
+
+  void refreshToolbar() async {
+    setState(() {
+      _showToolbar = false;
+    });
+    await Future.delayed(Duration(milliseconds: 300));
+    setState(() {
+      _showToolbar = true;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
+        actions: <Widget>[
+          Center(
+            child: GestureDetector(
+              child: Text('SAVE'),
+              onTap: () => save(),
+            ),
+          ),
+          SizedBox(
+            width: 20,
+          ),
+          Center(
+            child: GestureDetector(
+              child: Text('LOAD'),
+              onTap: () => load(),
+            ),
+          ),
+          SizedBox(
+            width: 20,
+          ),
+        ],
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -54,13 +105,16 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
           ),
-          StyleToolbar(
-            stayFocused: false,
-            toolbarUndoRedoColor: Colors.white,
-            toolbarActionColor: Colors.white.withOpacity(0.5),
-            toolbarBackgroundColor: Colors.indigo,
-            toolbarActionToggleColor: Colors.white,
-            controller: _controller,
+          Visibility(
+            visible: _showToolbar,
+            child: StyleToolbar(
+              stayFocused: false,
+              toolbarUndoRedoColor: Colors.white,
+              toolbarActionColor: Colors.white.withOpacity(0.5),
+              toolbarBackgroundColor: Colors.indigo,
+              toolbarActionToggleColor: Colors.white,
+              controller: _controller,
+            ),
           ),
         ],
       ),

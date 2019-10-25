@@ -119,7 +119,7 @@ class SpannableTextEditingController extends TextEditingController {
   }
 
   bool canUndo() => _histories.isNotEmpty;
-
+  
   void undo() {
     assert(canUndo());
     _updateHistories(_undoHistories);
@@ -184,8 +184,13 @@ class SpannableTextEditingController extends TextEditingController {
         if (index + 1 < diffList.length) {
           final nextDiff = diffList[index + 1];
           if (nextDiff.operation == Operation.delete) {
-            if (nextDiff.text.length == diff.text.length) break;
+            if (nextDiff.text.length == diff.text.length) {
+              operation = Operation.delete;
+              length = diff.text.length - nextDiff.text.length;
+              break;
+            }
             if (nextDiff.text.length < diff.text.length) {
+            
               operation = Operation.delete;
               length = diff.text.length - nextDiff.text.length;
               break;
@@ -198,9 +203,13 @@ class SpannableTextEditingController extends TextEditingController {
       } else if (diff.operation == Operation.delete) {
         if (index + 1 < diffList.length) {
           final nextDiff = diffList[index + 1];
-
           if (nextDiff.operation == Operation.insert) {
-            if (nextDiff.text.length == diff.text.length) break;
+            if (nextDiff.text.length == diff.text.length) {
+              offset += diff.text.length;
+              operation = Operation.insert;
+              length = nextDiff.text.length;
+              break;
+            }
             if (nextDiff.text.length > diff.text.length) {
               offset++;
               operation = Operation.insert;
@@ -216,8 +225,12 @@ class SpannableTextEditingController extends TextEditingController {
     }
 
     if (operation != null) {
+      // print('Operation: $operation');
+      // print('Offset: $offset');
+      // print('Length: $length');
       return _TextChange(operation, offset, length);
     } else {
+      //print('diffList length: ${diffList.length}');
       return null;
     }
   }
