@@ -104,6 +104,19 @@ StyleToolbar(
 ),
 ```
 
+* Customize StyleToolbar widget
+
+```dart
+StyleToolbar(
+  controller: controller,
+  stayFocused: false,
+  toolbarUndoRedoColor: Colors.white,
+  toolbarActionColor: Colors.white.withOpacity(0.5),
+  toolbarBackgroundColor: Colors.indigo,
+  toolbarActionToggleColor: Colors.white,
+),
+```
+
 * Undo & Redo operation
 
 ```dart
